@@ -1,0 +1,15 @@
+# This repo intentionally tracks only the release artifacts (dist/, build/)
+# and README.md. Source code stays local / private.
+/*
+!/dist
+!/build
+!/README.md
+!/.gitignore
+!/.gitattributes
+
+# Inside dist/, keep only the installer, its blockmap and the update feed —
+# not the uncompressed win-unpacked/ folder or build-debug metadata.
+/dist/*
+!/dist/*.exe
+!/dist/*.exe.blockmap
+!/dist/latest.yml
