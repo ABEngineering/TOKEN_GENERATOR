@@ -34,9 +34,16 @@ FunctionEnd
 ; electron-builder's base script always creates the shortcut
 ; (createDesktopShortcut setting); here we remove it again if the user
 ; unchecked the box on the custom page.
+;
+; Silent installs (auto-updates run by electron-updater) never show custom
+; pages, so $DesktopShortcutState would stay empty and this would delete the
+; user's existing Desktop shortcut/icon on every automatic update. Only act
+; on it for interactive installs.
 !macro customInstall
-  ${If} $DesktopShortcutState != ${BST_CHECKED}
-    Delete "$newDesktopLink"
+  ${IfNot} ${Silent}
+    ${If} $DesktopShortcutState != ${BST_CHECKED}
+      Delete "$newDesktopLink"
+    ${EndIf}
   ${EndIf}
 !macroend
 !endif
