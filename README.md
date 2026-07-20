@@ -2,7 +2,6 @@
 
 Desktop app (Electron) that generates a `TOKEN_API` and matching passwords by
 combining a **project name** with an **email address**.
-Creator: **Amaro Balsamo**.
 
 ## How TOKEN_API and API_Password are generated
 
@@ -21,7 +20,11 @@ Creator: **Amaro Balsamo**.
 The same project name + email always produces the same token and the same
 passwords (deterministic, reproducible).
 
-## Download
-
+## Download ##############################################################################
+To download proceed to the link: 
 https://github.com/ABEngineering/TOKEN_GENERATOR/releases
 
+Download the file:
+TOKEN_API Generator Setup x.x.x.exe
+
+Creator: **Amaro Balsamo**.
