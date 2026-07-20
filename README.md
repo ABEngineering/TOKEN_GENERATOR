@@ -51,41 +51,77 @@ The About window (`renderer/about.html`) is styled to match the main app
 
 ## How updates work
 
-The app uses [`electron-updater`](https://www.electron.build/auto-update). The
-mechanism is already wired up (`main.js`), but to be actually usable you need to
-publish releases somewhere reachable by users. `package.json` → `build.publish`
-is configured with a `generic` provider pointing at a placeholder URL:
+The app uses [`electron-updater`](https://www.electron.build/auto-update), wired
+up in `main.js`. `package.json` → `build.publish` points it at the project's
+GitHub repository:
 
 ```json
-"publish": [{ "provider": "generic", "url": "https://updates.example.com/token-api-generator/" }]
+"publish": [{ "provider": "github", "owner": "ABEngineering", "repo": "TOKEN_GENERATOR" }]
 ```
 
-To publish an update:
+Users with the app installed, clicking **Info → Check for Updates**, will
+automatically find and download any new GitHub Release, then can restart from
+the About window to install it. See "Releasing a new version" below for how a
+release actually gets published.
 
-1. Bump the version in `package.json` (e.g. `1.0.0` → `1.1.0`).
-2. Run `npm run dist`: creates the installer + `latest.yml` in `dist/`.
-3. Upload **both** files (the `.exe` and `latest.yml`) to the URL configured in
-   `build.publish.url` (any static hosting/S3/web server works), or replace the
-   `generic` provider with `github` to distribute via GitHub Releases (see the
-   electron-builder docs).
-4. Users with the app installed, clicking **Info → Check for Updates**, will
-   automatically find and download the new version, then can restart from the
-   About window to install it.
+## GitHub repository
+
+This project is connected to
+[github.com/ABEngineering/TOKEN_GENERATOR](https://github.com/ABEngineering/TOKEN_GENERATOR.git)
+as the `origin` remote. The repository intentionally tracks only the release
+artifacts, not the application source:
+
+- `dist/` — the NSIS installer (`.exe`), its `.blockmap`, and `latest.yml`
+  (everything else in `dist/`, like the uncompressed `win-unpacked/` folder, is
+  ignored)
+- `build/` — the custom NSIS install script
+- `README.md`
+
+This is enforced by `.gitignore` (ignores everything else) and `.gitattributes`
+routes the `.exe`/`.blockmap` through **Git LFS** (`git lfs install --local` has
+already been run in this repo) so the binary installer doesn't bloat the normal
+git history on every release.
+
+## Releasing a new version
+
+```bash
+set GH_TOKEN=your_github_token_with_repo_scope
+npm run release            # defaults to a patch bump
+npm run release -- minor   # or: minor / major
+```
+
+`scripts/release.js` does the full flow:
+
+1. Bumps the version in `package.json` (`version.js` re-exports it, so the app,
+   installer and About window all stay in sync automatically).
+2. Runs `npm run dist -- --publish always`, which builds the installer **and**
+   uploads it (plus `latest.yml`) as a GitHub Release asset for
+   `ABEngineering/TOKEN_GENERATOR`, using `GH_TOKEN` for authentication.
+3. Commits the refreshed `dist/` + `build/` + `README.md` and tags the commit
+   (`vX.Y.Z`) locally.
+
+The script does **not** push automatically — review the commit, then run:
+
+```bash
+git push origin main --tags
+```
 
 ## Project structure
 
 ```
-main.js                main Electron process (menus, windows, auto-update, IPC)
-preload.js              secure bridge for the main window (clipboard, app info)
-about-preload.js         secure bridge for the About window (version, update IPC)
-renderer/index.html      main window UI
-renderer/about.html      About window UI
-renderer/theme.css       shared night-sky theme variables and components
-renderer/style.css       main window layout styles
-renderer/about.css       About window layout styles
-renderer/app.js          token/password generation logic and clipboard copy
-renderer/about.js        About window logic (version display, update status)
-assets/icon.ico          application/installer icon (multi-resolution)
-scripts/build-icon.js    regenerates assets/icon.ico from the PNG frames in assets/
-build/installer.nsh      custom NSIS script (Desktop shortcut checkbox)
+main.js                 main Electron process (menus, windows, auto-update, IPC)
+version.js               single source of truth for the app version (reads package.json)
+preload.js               secure bridge for the main window (clipboard, app info)
+about-preload.js          secure bridge for the About window (version, update IPC)
+renderer/index.html       main window UI
+renderer/about.html       About window UI
+renderer/theme.css        shared night-sky theme variables and components (incl. animated logo)
+renderer/style.css        main window layout styles
+renderer/about.css        About window layout styles
+renderer/app.js           token/password generation logic and clipboard copy
+renderer/about.js         About window logic (version display, update status)
+assets/icon.ico           application/installer icon (multi-resolution)
+scripts/build-icon.js     regenerates assets/icon.ico from the PNG frames in assets/
+scripts/release.js        version bump + build + publish to GitHub Releases
+build/installer.nsh       custom NSIS script (Desktop shortcut checkbox)
 ```
