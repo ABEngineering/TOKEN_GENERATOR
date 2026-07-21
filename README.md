@@ -20,6 +20,15 @@ combining a **project name** with an **email address**.
 The same project name + email always produces the same token and the same
 passwords (deterministic, reproducible).
 
+## Tokens manager
+
+The **Tokens** page (left sidebar) keeps a list of freeform token entries
+(name + code, both multi-line) grouped into projects, shown as tabs at the
+top so several projects can stay open at once. Projects are kept
+automatically between app restarts. Use **File → Open Tokens / Save Tokens /
+Save Tokens As...** to import or export a project as a `.json` file. Closing
+a project with unsaved changes asks you to save it first.
+
 ## Download ##############################################################################
 To download proceed to the link: 
 https://github.com/ABEngineering/TOKEN_GENERATOR/releases
