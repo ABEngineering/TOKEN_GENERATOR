@@ -1,7 +1,8 @@
 # TOKEN_API Generator
 
 Desktop app (Electron) that generates a `TOKEN_API` and matching passwords by
-combining a **project name** with an **email address**.
+combining a **project name** with an **email address**, and doubles as a
+manager for your saved tokens and AI prompts.
 
 ## How TOKEN_API and API_Password are generated
 
@@ -28,6 +29,25 @@ top so several projects can stay open at once. Projects are kept
 automatically between app restarts. Use **File → Open Tokens / Save Tokens /
 Save Tokens As...** to import or export a project as a `.json` file. Closing
 a project with unsaved changes asks you to save it first.
+
+## Prompt library
+
+The **Prompt** page keeps a library of AI prompts, grouped into tabs the same
+way the Tokens page does, auto-saved between restarts and exportable to a
+`.json` file via **File → Open Prompt / Save Prompt / Save Prompt As...**.
+Each prompt has five numbered sections:
+
+1. **Prompt Title** — up to 200 characters, with a status picker next to it
+   (**Not Used** / **Under review** / **Approved**, each with its own icon
+   and color).
+2. **Author Prompt** — up to 200 characters.
+3. **Prompt - Application Scenario** — the situation or use case the prompt
+   is meant for.
+4. **Prompt Description** — the full prompt text sent to the AI model, with
+   a **Copy** button to grab the whole thing in one click.
+5. **Files** — attach reference PDFs, images, Word or Excel files (bigger 3D
+   "+" button, easy to spot).
+   
 
 ## Download ##############################################################################
 To download proceed to the link: 
