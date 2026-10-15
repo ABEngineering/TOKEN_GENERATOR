@@ -1,49 +1,48 @@
 !ifndef BUILD_UNINSTALLER
-!include "nsDialogs.nsh"
 
-Var DesktopShortcutCheckbox
-Var DesktopShortcutState
+; Desktop shortcut choice lives on the Finish page (end of the wizard,
+; right before the user closes it) instead of a separate page earlier in
+; the flow. createDesktopShortcut is set to false in package.json so the
+; base script never auto-creates the shortcut - this file is the only
+; place that does, keeping a single source of truth.
+;
+; Checked by default so interactive installs keep the old always-on
+; behavior unless the user opts out.
+;
+; Silent installs (auto-updates run by electron-updater) never show the
+; Finish page, so CreateDesktopShortcutFunc below would never run for
+; them - which is what we want for an update (existing shortcut/icon is
+; left exactly as it was). A genuine fresh silent install (plain /S, not
+; an update) still gets a shortcut via customInstall below, since there
+; is no Finish page to ask on.
+!macro customFinishPage
+  Function CreateDesktopShortcutFunc
+    CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$appExe" "" "$appExe" 0 "" "" "${APP_DESCRIPTION}"
+  FunctionEnd
 
-; Extra page shown after choosing the install directory, with a checkbox
-; to decide whether to create the Desktop shortcut.
-!macro customPageAfterChangeDir
-  Page custom DesktopShortcutPageCreate DesktopShortcutPageLeave
+  Function LaunchAppFunc
+    ${if} ${isUpdated}
+      StrCpy $0 "--updated"
+    ${else}
+      StrCpy $0 ""
+    ${endif}
+    ${StdUtils.ExecShellAsUser} $1 "$launchLink" "open" "$0"
+  FunctionEnd
+
+  !define MUI_FINISHPAGE_RUN
+  !define MUI_FINISHPAGE_RUN_FUNCTION "LaunchAppFunc"
+
+  !define MUI_FINISHPAGE_SHOWREADME ""
+  !define MUI_FINISHPAGE_SHOWREADME_TEXT "Create a Desktop shortcut"
+  !define MUI_FINISHPAGE_SHOWREADME_FUNCTION "CreateDesktopShortcutFunc"
+
+  !insertmacro MUI_PAGE_FINISH
 !macroend
 
-Function DesktopShortcutPageCreate
-  nsDialogs::Create 1018
-  Pop $0
-  ${If} $0 == error
-    Abort
-  ${EndIf}
-
-  ${NSD_CreateLabel} 0 0 100% 24u "Choose whether to create a Desktop shortcut"
-  Pop $1
-
-  ${NSD_CreateCheckbox} 0 32u 100% 12u "Create a Desktop shortcut"
-  Pop $DesktopShortcutCheckbox
-  ${NSD_Check} $DesktopShortcutCheckbox
-
-  nsDialogs::Show
-FunctionEnd
-
-Function DesktopShortcutPageLeave
-  ${NSD_GetState} $DesktopShortcutCheckbox $DesktopShortcutState
-FunctionEnd
-
-; electron-builder's base script always creates the shortcut
-; (createDesktopShortcut setting); here we remove it again if the user
-; unchecked the box on the custom page.
-;
-; Silent installs (auto-updates run by electron-updater) never show custom
-; pages, so $DesktopShortcutState would stay empty and this would delete the
-; user's existing Desktop shortcut/icon on every automatic update. Only act
-; on it for interactive installs.
 !macro customInstall
-  ${IfNot} ${Silent}
-    ${If} $DesktopShortcutState != ${BST_CHECKED}
-      Delete "$newDesktopLink"
-    ${EndIf}
+  ${If} ${Silent}
+  ${AndIfNot} ${isUpdated}
+    CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$appExe" "" "$appExe" 0 "" "" "${APP_DESCRIPTION}"
   ${EndIf}
 !macroend
 !endif

@@ -1,8 +1,8 @@
-version: 1.0.10
+version: 1.0.11
 files:
-  - url: TOKEN_API-Generator-Setup-1.0.10.exe
-    sha512: ck9KrOlmNTh76zLz/XF4w26fQhIqyTVYR9p9Mts1w4hK7cid3ns0HCd+iCcqdKKgZcBlVHjxrpcoBoDsBbeI1g==
-    size: 79147464
-path: TOKEN_API-Generator-Setup-1.0.10.exe
-sha512: ck9KrOlmNTh76zLz/XF4w26fQhIqyTVYR9p9Mts1w4hK7cid3ns0HCd+iCcqdKKgZcBlVHjxrpcoBoDsBbeI1g==
-releaseDate: '2026-10-15T13:19:18.601Z'
+  - url: TOKEN_API-Generator-Setup-1.0.11.exe
+    sha512: RNfuBq+3VqdmS1Os/fed4Aw8bIj16T3TUb5mgBQFIG6tx42m0r49yEoPvPtdY+nAOn8sg5UHeWdW+dWwGmF5Uw==
+    size: 79147518
+path: TOKEN_API-Generator-Setup-1.0.11.exe
+sha512: RNfuBq+3VqdmS1Os/fed4Aw8bIj16T3TUb5mgBQFIG6tx42m0r49yEoPvPtdY+nAOn8sg5UHeWdW+dWwGmF5Uw==
+releaseDate: '2026-10-15T13:32:58.768Z'
