@@ -58,7 +58,6 @@ Each prompt has five numbered sections:
    a **Copy** button to grab the whole thing in one click.
 5. **Files** — attach reference PDFs, images, Word or Excel files (bigger 3D
    "+" button, easy to spot).
-
 An "i" info button next to each section title opens a short popup explaining
 what that field is for.
 
